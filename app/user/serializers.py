@@ -3,25 +3,32 @@ Serializers for the user API View.
 """
 from django.contrib.auth import (
     get_user_model,
-    authenticate, #function comes with Django that allows you to authenticate with authentication system
+    #function comes with Django that allows you to
+    # authenticate with authentication system
+    authenticate,
 )
 from django.utils.translation import gettext as _
 # serializer is a way to convert objects to and from python objects
 from rest_framework import serializers
 
 
-# automatically validate and save things to a specific model that we define in our serialization
+# automatically validate and save things to a specific model
+# that we define in our serialization
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
 
-    # tell the Django Rest Framework the model and the fields and any additional arguments that we
-    # want to pass to the serializers and serialziers need to know what model is representing
+    # tell the Django Rest Framework the model and the fields and
+    # any additional arguments that we
+    # want to pass to the serializers and serialziers
+    # need to know what model is representing
     class Meta:
         model = get_user_model()
         fields = ['email', 'password', 'name']
-        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}} # cannot read password for security issue
+        # cannot read password for security issue
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
 
-    # overwrite the create method to be called after validation and only be called when validation is successful
+    # overwrite the create method to be called after validation
+    # and only be called when validation is successful
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
         return get_user_model().objects.create_user(**validated_data)
@@ -29,13 +36,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     # overwrite the update method to make sure the password is hashed
     # instance: the model instance that's going to be updated
-    # validated_data: the data that's already passed through the serializer validation (email, pwd, name)
+    # validated_data: the data that's already passed through
+    # the serializer validation (email, pwd, name)
     def update(self, instance, validated_data):
         """Update and return user."""
-        # retrieve the password from the validated data dictionary and remove it in the dict after being retrieved
+        # retrieve the password from the validated data dictionary
+        # and remove it in the dict after being retrieved
         # don't force the user to have pwd so default to none here
         password = validated_data.pop('password', None)
-        # still keeping some function of the wheel while change only things we need by calling the update function provided by base serializer
+        # still keeping some function of the wheel while change only
+        # things we need by calling the update function provided by base serializer
         user = super().update(instance, validated_data)
 
         if password:
@@ -43,6 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token."""

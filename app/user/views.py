@@ -26,11 +26,17 @@ class CreateTokenView(ObtainAuthToken):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user."""
     serializer_class = UserSerializer
-    authentication_classes = [authentication.TokenAuthentication] #make sure the user actually exists
-    permission_classes = [permissions.IsAuthenticated] #the user is authenticated to use this api
+    #make sure the user actually exists
+    authentication_classes = [authentication.TokenAuthentication]
+    #the user is authenticated to use this api
+    permission_classes = [permissions.IsAuthenticated]
 
-    # overwrite get_object (any http requests made to the API): only retrieving the user attached to the request
-    # made http get request to this endpoint -> call get_object to get the user -> retrieve the user that was authenticated -> run through serializer before returning result to API
+    # overwrite get_object (any http requests made to the API): only
+    # retrieving the user attached to the request
+    # made http get request to this endpoint ->
+    # call get_object to get the user ->
+    # retrieve the user that was authenticated ->
+    # run through serializer before returning result to API
     def get_object(self):
         """Retrieve and return the authenticated user."""
         return self.request.user

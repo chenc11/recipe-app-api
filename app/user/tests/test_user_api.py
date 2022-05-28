@@ -14,7 +14,6 @@ CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
-
 def create_user(**params):
     """Create and return a new user for testing."""
     return get_user_model().objects.create_user(**params)
@@ -36,10 +35,13 @@ class PublicUserApiTests(TestCase):
         }
         res = self.client.post(CREATE_USER_URL, payload)
 
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED) # check for the success response code for creating objects in db via an API
+        # check for the success response code for creating objects in db via an API
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(email=payload['email'])
-        self.assertTrue(user.check_password(payload['password'])) # check if the password matches with the email
-        self.assertNotIn('password', res.data) # make sure the password is not part of the data response
+        # check if the password matches with the email
+        self.assertTrue(user.check_password(payload['password']))
+        # make sure the password is not part of the data response
+        self.assertNotIn('password', res.data)
 
     # make sure an email can only be registered with one user in the db
     def test_user_with_email_exists_error(self):
@@ -50,7 +52,8 @@ class PublicUserApiTests(TestCase):
             'name': 'Test Name',
         }
         create_user(**payload)
-        res = self.client.post(CREATE_USER_URL, payload) # try to register with the same email address again
+        # try to register with the same email address again
+        res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -71,7 +74,8 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
-    # test the successful case when we log in or use the token API to create a new token in the database
+    # test the successful case when we log in or use the token API to
+    # create a new token in the database
     def test_create_token_for_user(self):
         """Test generates token for valid credentials."""
         user_details = {

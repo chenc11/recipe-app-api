@@ -30,7 +30,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipes."""
-    tags = TagSerializer(many=True, required=False) # can be a list of tags and tag is not requried
+    # can be a list of tags and tag is not requried
+    tags = TagSerializer(many=True, required=False)
     ingredients = IngredientSerializer(many=True, required=False)
 
     class Meta:
@@ -43,12 +44,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def _get_or_create_tags(self, tags, recipe):
         """Handle getting or creating tags as needed."""
-        auth_user = self.context['request'].user # context is passed to the serializer by the view
+        # context is passed to the serializer by the view
+        auth_user = self.context['request'].user
         # loops through all the tags we poped from the validated data
         for tag in tags:
-            # retrieve the tags if already existed in the database for authenticated user
-            # if not existed, create a value with the value we passed in
-            # so we won't get duplicate tags
+            # retrieve the tags if already existed in the database
+            # for authenticated userif not existed, create a value with
+            # the value we passed in so we won't get duplicate tags
             # created: true or false; if being created or fetched
             tag_obj, created = Tag.objects.get_or_create(
                 user=auth_user,
@@ -56,8 +58,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
             recipe.tags.add(tag_obj)
 
-
-    # _ means the method to be internal only so that won't be accidentally make call to it directly
+    # _ means the method to be internal only so that won't
+    # be accidentally make call to it directly
     def _get_or_create_ingredients(self, ingredients, recipe):
         """Handle getting or creating ingredients as needed."""
         auth_user = self.context['request'].user
@@ -67,29 +69,37 @@ class RecipeSerializer(serializers.ModelSerializer):
                 user=auth_user,
                 **ingredient,
             )
-            recipe.ingredients.add(ingredient_obj) # assign ingredients to the ingredients list
-
+            # assign ingredients to the ingredients list
+            recipe.ingredients.add(ingredient_obj)
 
     def create(self, validated_data):
         """Create a recipe."""
-        # if tags are existed in the validated data and then remove it from validated data and assign it to a new variable called tags
+        # if tags are existed in the validated data and then
+        # remove it from validated data and assign it to a new variable called tags
         # if doesn't exist, default to empty list
         tags = validated_data.pop('tags', [])
         ingredients = validated_data.pop('ingredients', [])
-        recipe = Recipe.objects.create(**validated_data) # remove the tags before created the recipe
-        # tags is a related field and is expected to be created separately and added as a relationship to recipe
+        # remove the tags before created the recipe
+        recipe = Recipe.objects.create(**validated_data)
+        # tags is a related field and is expected to be created separately
+        # and added as a relationship to recipe
         self._get_or_create_tags(tags, recipe)
         self._get_or_create_ingredients(ingredients, recipe)
         return recipe
 
-
     # override the update function to allow creating new objects in the field
-    def update(self, instance, validated_data): # the existing instance and validated data that we want to pass to
+    # the existing instance and validated data that we want to pass to
+    def update(self, instance, validated_data):
         """Update recipe."""
         tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
         if tags is not None:
             instance.tags.clear()
             self._get_or_create_tags(tags, instance)
+
+        if ingredients is not None:
+            instance.ingredients.clear()
+            self._get_or_create_ingredients(ingredients, instance)
 
         # assign the values outside of tags to the instance
         for attr, value in validated_data.items():
@@ -99,8 +109,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-
-# will be an extension of the the RecipeSerializer so take all functionality of RecipeSerializer and add extra fields
+# will be an extension of the the RecipeSerializer so take all functionality
+# of RecipeSerializer and add extra fields
 class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail view."""
 

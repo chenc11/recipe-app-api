@@ -24,11 +24,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve recipes for authenticated user."""
-        return self.queryset.filter(user=self.request.user).order_by('-id') # filter only recipes of the user assigned to the request
+        # filter only recipes of the user assigned to the request
+        return self.queryset.filter(user=self.request.user).order_by('-id')
 
-    # the method get called when RDF wants to determine the class that's being used for a particular action
+    # the method get called when RDF wants to determine the class
+    # that's being used for a particular action
     # override this method so that when the user is calling the detail endpoint,
-    # we're going to use the detail serializer instead of the default one that's configured the list view
+    # we're going to use the detail serializer instead of the default
+    # one that's configured the list view
     def get_serializer_class(self):
         """Return the serializer class for request."""
         if self.action == 'list':
@@ -44,33 +47,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-# leverage viewset based class because the tag utilizes the CURD functionality
-class TagViewSet(mixins.DestroyModelMixin,
-                 mixins.UpdateModelMixin,
-                 mixins.ListModelMixin,
-                 viewsets.GenericViewSet):
-    """Manage tags in the database."""
-    serializer_class = serializers.TagSerializer
-    queryset = Tag.objects.all()
+class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.ListModelMixin,
+                            viewsets.GenericViewSet):
+    """Base viewset for recipe attributes."""
+    # add support for token authentication and the only authentication for this viewset
     authentication_classes = [TokenAuthentication]
+    # all the user must be authenticated to use this endpoint
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """Filter queryset to authenticated user."""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
-
-
-class IngredientViewSet(mixins.DestroyModelMixin,
-                        mixins.UpdateModelMixin, # automatically add the detail endpoint for the ingredient API
-                        mixins.ListModelMixin,
-                        viewsets.GenericViewSet):
-    """Manage ingredients in the database."""
-    serializer_class = serializers.IngredientSerializer
-    queryset = Ingredient.objects.all() # tell Django what models we want to be manageable through the ingredient viewset
-    authentication_classes = [TokenAuthentication] # add support for token authentication and the only authentication for this viewset
-    permission_classes = [IsAuthenticated] # all the user must be authenticated to use this endpoint
 
     # we only want users to view, update, and make changes to their own ingredients
     def get_queryset(self):
         """Filter queryset to authenticated user."""
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+# leverage viewset based class because the tag utilizes the CURD functionality
+class TagViewSet(BaseRecipeAttrViewSet):
+    """Manage tags in the database."""
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+
+
+class IngredientViewSet(BaseRecipeAttrViewSet):
+    """Manage ingredients in the database."""
+    serializer_class = serializers.IngredientSerializer
+    # tell Django what models we want to be manageable through the ingredient viewset
+    queryset = Ingredient.objects.all()

@@ -24,13 +24,12 @@ from recipe.serializers import (
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
-
 def detail_url(recipe_id):
     """Create and return a recipe detail URL."""
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
-
-def create_recipe(user, **params): # **params is a dictionary of all the params we passed to create recipe function?
+# **params is a dictionary of all the params we passed to create recipe function?
+def create_recipe(user, **params):
     """Create and return a sample recipe."""
     defaults = {
         'title': 'Sample recipe title',
@@ -44,7 +43,6 @@ def create_recipe(user, **params): # **params is a dictionary of all the params 
 
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
-
 
 def create_user(**params):
     """Create and return a new user."""
@@ -78,12 +76,14 @@ class PrivateRecipeApiTests(TestCase):
         create_recipe(user=self.user)
         create_recipe(user=self.user)
 
-        res = self.client.get(RECIPES_URL) # return the recipes that were for the uses in the system
+        # return the recipes that were for the uses in the system
+        res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.all().order_by('-id')
         serializer = RecipeSerializer(recipes, many=True) # passes a list of items
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data) # Data dictionary of the objects passed through the serializer
+        # Data dictionary of the objects passed through the serializer
+        self.assertEqual(res.data, serializer.data)
 
     def test_recipe_list_limited_to_user(self):
         """Test list of recipes is limited to authenticated user."""
@@ -120,7 +120,8 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipe = Recipe.objects.get(id=res.data['id']) # get the id of the created recipe
         for k, v in payload.items(): # k - key (e.g. title), v - value (e.g. 'Sample recipe')
-            # we use getattr here because recipe.k actually requires us to know the name of the key instead just a 代号
+            # we use getattr here because recipe.k actually
+            # requires us to know the name of the key instead just a 代号
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
 
@@ -201,7 +202,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
 
-
     def test_create_recipe_with_new_tags(self):
         """Test creating a recipe with new tags."""
         payload = {
@@ -268,7 +268,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipe.tags.count(), 1)
         self.assertNotIn(tag_halal, recipe.tags.all())
 
-
     def test_create_tag_on_update(self):
         """Test create tag when updating a recipe."""
         recipe = create_recipe(user=self.user)
@@ -279,9 +278,9 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         new_tag = Tag.objects.get(user=self.user, name='Lunch')
-        # no need to call refresh db because recipe.tags.all() do a separate query that's going to retrieve all fresh objs for that particular recipe
+        # no need to call refresh db because recipe.tags.all() do a
+        # separate query that's going to retrieve all fresh objs for that particular recipe
         self.assertIn(new_tag, recipe.tags.all())
-
 
     def test_update_recipe_assign_tag(self):
         """Test assigning an existing tag when updating a recipe."""
@@ -298,7 +297,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertIn(tag_lunch, recipe.tags.all())
         self.assertNotIn(tag_breakfast, recipe.tags.all())
 
-
     def test_clear_recipe_tags(self):
         """Test clearing a recipes tags."""
         tag = Tag.objects.create(user=self.user, name='Dessert')
@@ -311,7 +309,6 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.tags.count(), 0)
-
 
     def test_create_recipe_with_new_ingredients(self):
         """Test creating a recipe with new ingredients."""
@@ -398,4 +395,3 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.ingredients.count(), 0)
-

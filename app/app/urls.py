@@ -23,12 +23,14 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'), # generate yaml file schema for our api
+     # generate yaml file schema for our api
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
     path(
         'api/docs/',
         SpectacularSwaggerView.as_view(url_name='api-schema'),
         name='api-docs',
-    ), # serve the swagger documentation that uses our schema to generate a GUI for our api documentation
+    ), # serve the swagger documentation that uses our schema to generate
+    # a GUI for our api documentation
     path('api/user/', include('user.urls')),
     path('api/recipe/', include('recipe.urls')),
 ]

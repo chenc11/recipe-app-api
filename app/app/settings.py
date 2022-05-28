@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_spectacular',
     'core',
+    'user',
+    'rest_framework.authtoken',
+
 ]
 
 MIDDLEWARE = [
@@ -128,3 +133,11 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# define customized user model
+AUTH_USER_MODEL = 'core.User'
+
+# configure the Django Rest Framework to use this drf_spectacular for generating OpenAPI schema
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}

@@ -30,4 +30,5 @@ urlpatterns = [
         name='api-docs',
     ), # serve the swagger documentation that uses our schema to generate a GUI for our api documentation
     path('api/user/', include('user.urls')),
+    path('api/recipe/', include('recipe.urls')),
 ]

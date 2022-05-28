@@ -3,10 +3,11 @@ Tests for models.
 """
 from decimal import Decimal
 from django.test import TestCase
-"""get reference to customized user model"""
-from django.contrib.auth import get_user_model
 
+# get reference to customized user model
+from django.contrib.auth import get_user_model
 from core import models
+
 
 
 # create a user for testing

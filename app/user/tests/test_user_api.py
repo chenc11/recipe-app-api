@@ -9,10 +9,12 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 
-# reverse() can help us get the url from the name of the view that we want get url for
+# reverse() can help us get the url from the name
+# of the view that we want get url for
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
+
 
 def create_user(**params):
     """Create and return a new user for testing."""
@@ -35,7 +37,8 @@ class PublicUserApiTests(TestCase):
         }
         res = self.client.post(CREATE_USER_URL, payload)
 
-        # check for the success response code for creating objects in db via an API
+        # check for the success response code
+        # for creating objects in db via an API
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(email=payload['email'])
         # check if the password matches with the email

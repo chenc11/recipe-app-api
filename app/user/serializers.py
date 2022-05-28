@@ -3,7 +3,7 @@ Serializers for the user API View.
 """
 from django.contrib.auth import (
     get_user_model,
-    #function comes with Django that allows you to
+    # function comes with Django that allows you to
     # authenticate with authentication system
     authenticate,
 )
@@ -32,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
         return get_user_model().objects.create_user(**validated_data)
-        # overwrite the create method and pass only the validated data into serializer
+        # overwrite the create method and pass
+        # only the validated data into serializer
 
     # overwrite the update method to make sure the password is hashed
     # instance: the model instance that's going to be updated
@@ -45,7 +46,8 @@ class UserSerializer(serializers.ModelSerializer):
         # don't force the user to have pwd so default to none here
         password = validated_data.pop('password', None)
         # still keeping some function of the wheel while change only
-        # things we need by calling the update function provided by base serializer
+        # things we need by calling the update
+        # function provided by base serializer
         user = super().update(instance, validated_data)
 
         if password:

@@ -46,7 +46,8 @@ class PrivateTagsApiTests(TestCase):
     def setUp(self):
         self.user = create_user()
         self.client = APIClient()
-        self.client.force_authenticate(self.user) # authenticate user on that client
+        # authenticate user on that client
+        self.client.force_authenticate(self.user)
 
     def test_retrieve_tags(self):
         """Test retrieving a list of tags."""
@@ -64,7 +65,8 @@ class PrivateTagsApiTests(TestCase):
     def test_tags_limited_to_user(self):
         """Test list of tags is limited to authenticated user."""
         user2 = create_user(email='user2@example.com')
-        Tag.objects.create(user=user2, name='Fruity') # create tag for user2
+        # create tag for user2
+        Tag.objects.create(user=user2, name='Fruity')
         # create another tag for authenticated user
         tag = Tag.objects.create(user=self.user, name='Comfort Food')
 

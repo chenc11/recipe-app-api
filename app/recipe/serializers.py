@@ -39,7 +39,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'time_minutes', 'price', 'link', 'tags',
             'ingredients',
-        ] # fields that can be seen in serializer
+        ]  # fields that can be seen in serializer
         read_only_fields = ['id']
 
     def _get_or_create_tags(self, tags, recipe):
@@ -64,7 +64,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         """Handle getting or creating ingredients as needed."""
         auth_user = self.context['request'].user
         for ingredient in ingredients:
-            # get existing ingredients from or create new ingredients in the database
+            # get existing ingredients from or
+            # create new ingredients in the database
             ingredient_obj, created = Ingredient.objects.get_or_create(
                 user=auth_user,
                 **ingredient,
@@ -81,7 +82,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients', [])
         # remove the tags before created the recipe
         recipe = Recipe.objects.create(**validated_data)
-        # tags is a related field and is expected to be created separately
+        # tags is a related field and is expected
+        # to be created separately
         # and added as a relationship to recipe
         self._get_or_create_tags(tags, recipe)
         self._get_or_create_ingredients(ingredients, recipe)

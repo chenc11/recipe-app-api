@@ -3,7 +3,7 @@ Views for the recipe APIs
 """
 from rest_framework import (
     viewsets,
-    mixins, # mix in to a view to add additional functionality
+    mixins,  # mix in to a view to add additional functionality
 )
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +18,8 @@ from recipe import serializers
 class RecipeViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
     serializer_class = serializers.RecipeDetailSerializer
-    queryset = Recipe.objects.all() # objects available for this viewset
+    # objects available for this viewset
+    queryset = Recipe.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -29,7 +30,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     # the method get called when RDF wants to determine the class
     # that's being used for a particular action
-    # override this method so that when the user is calling the detail endpoint,
+    # override this method so that when the user
+    # is calling the detail endpoint,
     # we're going to use the detail serializer instead of the default
     # one that's configured the list view
     def get_serializer_class(self):
@@ -52,15 +54,18 @@ class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
                             mixins.ListModelMixin,
                             viewsets.GenericViewSet):
     """Base viewset for recipe attributes."""
-    # add support for token authentication and the only authentication for this viewset
+    # add support for token authentication and the
+    # only authentication for this viewset
     authentication_classes = [TokenAuthentication]
     # all the user must be authenticated to use this endpoint
     permission_classes = [IsAuthenticated]
 
-    # we only want users to view, update, and make changes to their own ingredients
+    # we only want users to view, update,
+    # and make changes to their own ingredients
     def get_queryset(self):
         """Filter queryset to authenticated user."""
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
 
 # leverage viewset based class because the tag utilizes the CURD functionality
 class TagViewSet(BaseRecipeAttrViewSet):
@@ -72,5 +77,6 @@ class TagViewSet(BaseRecipeAttrViewSet):
 class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredients in the database."""
     serializer_class = serializers.IngredientSerializer
-    # tell Django what models we want to be manageable through the ingredient viewset
+    # tell Django what models we want to be
+    # manageable through the ingredient viewset
     queryset = Ingredient.objects.all()

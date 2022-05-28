@@ -48,18 +48,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Recipe(models.Model):
     """Recipe object."""
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, # AUTH_USER_MODEL defined in settings.py
-        on_delete=models.CASCADE, # if the user is deleted, recipes related to this user will also be deleted
+        # AUTH_USER_MODEL defined in settings.py
+        settings.AUTH_USER_MODEL,
+        # if the user is deleted, recipes related
+        # to this user will also be deleted
+        on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True) # free text input
+    description = models.TextField(blank=True)  # free text input
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
     tags = models.ManyToManyField('Tag')
     ingredients = models.ManyToManyField('Ingredient')
 
-    def __str__(self): # specify the string representation of that object
+    # specify the string representation of that object
+    def __str__(self):
         return self.title
 
 
@@ -73,6 +77,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Ingredient(models.Model):
     """Ingredient for recipes."""

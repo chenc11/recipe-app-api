@@ -45,5 +45,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
-admin.site.register(models.Tag) # Make Tag manageable in the admin site
+# Make Tag manageable in the admin site
+admin.site.register(models.Tag)
 admin.site.register(models.Ingredient)

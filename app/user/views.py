@@ -26,9 +26,9 @@ class CreateTokenView(ObtainAuthToken):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user."""
     serializer_class = UserSerializer
-    #make sure the user actually exists
+    # make sure the user actually exists
     authentication_classes = [authentication.TokenAuthentication]
-    #the user is authenticated to use this api
+    # the user is authenticated to use this api
     permission_classes = [permissions.IsAuthenticated]
 
     # overwrite get_object (any http requests made to the API): only

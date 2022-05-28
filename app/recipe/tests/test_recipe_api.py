@@ -24,11 +24,14 @@ from recipe.serializers import (
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
+
 def detail_url(recipe_id):
     """Create and return a recipe detail URL."""
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
-# **params is a dictionary of all the params we passed to create recipe function?
+
+# **params is a dictionary of all the
+# params we passed to create recipe function?
 def create_recipe(user, **params):
     """Create and return a sample recipe."""
     defaults = {
@@ -43,6 +46,7 @@ def create_recipe(user, **params):
 
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
+
 
 def create_user(**params):
     """Create and return a new user."""
@@ -80,7 +84,8 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.all().order_by('-id')
-        serializer = RecipeSerializer(recipes, many=True) # passes a list of items
+        # passes a list of items
+        serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         # Data dictionary of the objects passed through the serializer
         self.assertEqual(res.data, serializer.data)
@@ -118,8 +123,10 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.post(RECIPES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        recipe = Recipe.objects.get(id=res.data['id']) # get the id of the created recipe
-        for k, v in payload.items(): # k - key (e.g. title), v - value (e.g. 'Sample recipe')
+        # get the id of the created recipe
+        recipe = Recipe.objects.get(id=res.data['id'])
+        # k - key (e.g. title), v - value (e.g. 'Sample recipe')
+        for k, v in payload.items():
             # we use getattr here because recipe.k actually
             # requires us to know the name of the key instead just a 代号
             self.assertEqual(getattr(recipe, k), v)
@@ -139,7 +146,8 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.patch(url, payload)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        recipe.refresh_from_db() # by default, Django doesn't automatically refresh the field
+        # by default, Django doesn't automatically refresh the field
+        recipe.refresh_from_db()
         self.assertEqual(recipe.title, payload['title'])
         self.assertEqual(recipe.link, original_link)
         self.assertEqual(recipe.user, self.user)
@@ -279,7 +287,8 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         new_tag = Tag.objects.get(user=self.user, name='Lunch')
         # no need to call refresh db because recipe.tags.all() do a
-        # separate query that's going to retrieve all fresh objs for that particular recipe
+        # separate query that's going to retrieve all
+        # fresh objs for that particular recipe
         self.assertIn(new_tag, recipe.tags.all())
 
     def test_update_recipe_assign_tag(self):
@@ -289,7 +298,8 @@ class PrivateRecipeApiTests(TestCase):
         recipe.tags.add(tag_breakfast)
 
         tag_lunch = Tag.objects.create(user=self.user, name='Lunch')
-        payload = {'tags': [{'name': 'Lunch'}]} # change the breakfast tag to lunch tag
+        # change the breakfast tag to lunch tag
+        payload = {'tags': [{'name': 'Lunch'}]}
         url = detail_url(recipe.id)
         res = self.client.patch(url, payload, format='json')
 

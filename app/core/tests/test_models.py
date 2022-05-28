@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from core import models
 
 
-
 # create a user for testing
 def create_user(email='user@example.com', password='testpass123'):
     """Create a return a new user."""

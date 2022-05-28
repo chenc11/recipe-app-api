@@ -76,7 +76,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a recipe."""
         # if tags are existed in the validated data and then
-        # remove it from validated data and assign it to a new variable called tags
+        # remove it from validated data and assign
+        # it to a new variable called tags
         # if doesn't exist, default to empty list
         tags = validated_data.pop('tags', [])
         ingredients = validated_data.pop('ingredients', [])
